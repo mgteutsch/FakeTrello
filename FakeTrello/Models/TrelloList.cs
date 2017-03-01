@@ -6,16 +6,11 @@ using System.Web;
 
 namespace FakeTrello.Models
 {
-    public class Board
+    public class TrelloList
     {
         [Key]
-        public int BoardId { get; set; }
+        public int ListId { get; set; }
 
         public string Name { get; set; }
-
-        public string URL { get; set; }
-
-
-        public List<TrelloList> TrelloLists { get; set; }
     }
 }
