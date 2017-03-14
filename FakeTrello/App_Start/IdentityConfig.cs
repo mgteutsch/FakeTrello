@@ -86,6 +86,11 @@ namespace FakeTrello
             }
             return manager;
         }
+
+        public static implicit operator ApplicationUserManager(ApplicationUser v)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     // Configure the application sign-in manager which is used in this application.

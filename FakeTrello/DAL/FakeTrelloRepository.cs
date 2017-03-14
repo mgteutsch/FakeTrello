@@ -8,7 +8,7 @@ namespace FakeTrello.DAL
 {
     public class FakeTrelloRepository : IRepository
     {
-        public object Context { get; set; } //Property, added from fixing the red squiggly in FakeTrelloRepoTests
+        public FakeTrelloContext Context { get; set; } //Property, added from fixing the red squiggly in FakeTrelloRepoTests
         //private FakeTrelloContext context; ...Data member
 
         public FakeTrelloRepository()
@@ -24,7 +24,9 @@ namespace FakeTrello.DAL
 
         public void AddBoard(string name, ApplicationUser owner)
         {
-            throw new NotImplementedException();
+            Board board = new Board { Name = name, Owner = owner }; //Don't need Id because databases generate that info automatically
+            Context.Boards.Add(board); //But, for this to work, we need to mock the action of Adding
+            Context.SaveChanges(); //This "does the work"
         }
 
         public void AddCard(string name, int listId, string ownerId)
