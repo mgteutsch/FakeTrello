@@ -42,7 +42,11 @@ namespace FakeTrello.Tests.DAL
             mock_boards_set.As<IQueryable<Board>>().Setup(b => b.ElementType).Returns(query_boards.ElementType);
             mock_boards_set.As<IQueryable<Board>>().Setup(b => b.GetEnumerator()).Returns(() => query_boards.GetEnumerator());
 
+            //We have created methods for Add, we also need to mock the Remove method
             mock_boards_set.Setup(b => b.Add(It.IsAny<Board>())).Callback((Board board) => fake_board_table.Add(board));
+
+            mock_boards_set.Setup(b => b.Remove(It.IsAny<Board>())).Callback((Board board) => fake_board_table.Remove(board));
+
             fake_context.Setup(c => c.Boards).Returns(mock_boards_set.Object); // Context.Boards returns fake_board_table (a list)
         }
 
@@ -134,6 +138,25 @@ namespace FakeTrello.Tests.DAL
             //Act
             int expected_board_count = 2; //Sally's boards
             int actual_board_count = repo.GetBoardsFromUser(sally.Id).Count;
+
+            //Assert
+            Assert.AreEqual(expected_board_count, actual_board_count);
+        }
+
+        [TestMethod]
+        public void EnsureICanRemoveBoard()
+        {
+            //Arrange
+            fake_board_table.Add(new Board { BoardId = 1, Name = "My Board", Owner = sally });
+            fake_board_table.Add(new Board { BoardId = 2, Name = "My Board", Owner = sally });
+            fake_board_table.Add(new Board { BoardId = 3, Name = "My Board", Owner = sammy });
+            CreateFakeDatabase();
+
+            //Act
+            int expected_board_count = 2; //We have 3 total, and we are going to remove one in this example
+
+            repo.RemoveBoard(3); //Remove the board with the Id of 3
+            int actual_board_count = repo.Context.Boards.Count();
 
             //Assert
             Assert.AreEqual(expected_board_count, actual_board_count);
